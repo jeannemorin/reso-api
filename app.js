@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGO_URL)
+mongoose.connect(process.env.MONGO_URL, { dbName: "sample_reso"})
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error(err));
 

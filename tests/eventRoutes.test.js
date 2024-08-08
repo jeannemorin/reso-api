@@ -9,10 +9,7 @@ let adminToken;
 
 beforeAll(async () => {
   // Connect to MongoDB
-  await mongoose.connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
+  await mongoose.connect(process.env.MONGO_URL, { dbName: 'sample_reso'});
 
   // Clear the database
   await User.deleteMany({});
