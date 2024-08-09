@@ -9,7 +9,7 @@ let adminToken;
 
 beforeAll(async () => {
   // Connect to MongoDB
-  await mongoose.connect(process.env.MONGO_URL, { dbName: 'sample_reso'});
+  await mongoose.connect(process.env.MONGO_URL, { dbName: 'test'});
 
   // Clear the database
   await User.deleteMany({});
@@ -27,7 +27,8 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  // Disconnect from MongoDB
+
+  await mongoose.connection.db.dropDatabase();
   await mongoose.connection.close();
 });
 
