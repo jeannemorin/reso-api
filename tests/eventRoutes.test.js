@@ -286,6 +286,15 @@ describe('Event API', () => {
     expect(res.body).toHaveProperty('error');
   });
 
+  it('should find no event with this filter', async () => {
+    const res = await request(process.env.API_URL)
+      .get('/api/events/search')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ city: 'Paris'});
+
+    expect(res.statusCode).toBe(204);
+  });
+
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////// /events/upcoming //////////////////////////////////////////////////////////////////

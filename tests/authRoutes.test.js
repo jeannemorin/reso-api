@@ -5,7 +5,7 @@ const User = require('../models/userModel');
 
 beforeAll(async () => {
   // Connect to MongoDB
-  await mongoose.connect(process.env.MONGO_URL);
+  await mongoose.connect(process.env.MONGO_URL,{ dbName: 'test'});
 
   // Clear the database
   await User.deleteMany({});
