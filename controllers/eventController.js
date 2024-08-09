@@ -4,20 +4,23 @@ const Event = require('../models/eventModel');
 class EventController {
   async getEventById(req, res) {
     try {
-      const event = await eventService.getEventById(req.params.id);
-      if (!event) {
-        res.status(404);
-        throw new Error('Event not found');
+      if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        res.status(400).json({ error: 'Invalid Id' });
       }
-      res.json(event);
+      else
+      {
+        const event = await eventService.getEventById(req.params.id);
+        if (!event) {
+          res.status(404).json({ error : 'Event not found' });
+        }
+        else {
+          res.json(event);
+        }
+        
+      }
     } catch (err) {
-      if (err.name === 'CastError' && err.kind === 'ObjectId') {
-        res.status(404);
-        res.json({ error : 'Event not found' });
-      } else {
-        res.status(500);
-        res.json({ error: err.message });
-      }
+        res.status(500).json({ error: err.message });
+
     }
   }
 
@@ -32,40 +35,34 @@ class EventController {
 
   async createEvent(req, res) {
 
-    const newEvent = new Event(req.body);
-
     try {
-      await newEvent.save();
-    }
-    catch (err) {
-      res.status(400).json({ error: err.name });
-      return;
-    }
-
-    try {
-      const event = await eventService.createEvent(newEvent);
+      const event = await eventService.createEvent(req.body);
       res.status(201).json(event);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
+    } catch (error) {
+      if (error.name === 'ValidationError')
+        res.status(400).json({error: error.message});
+    else
+      res.status(500).json({ message: 'Failed to create content', error: error.message });
     }
   }
 
   async updateEvent(req, res) {
+    
     try {
-      const event = await eventService.updateEvent(req.params.id, req.body);
-      if (!event) {
-        res.status(404);
-        throw new Error('Event not found');
+      if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+        res.status(400).json({ error: 'Invalid Id' });
       }
-      res.json(event);
+      else
+      {
+        const event = await eventService.updateEvent(req.params.id, req.body);
+        if (!event) {
+          res.status(404).json({ error: 'Event not found'});
+          return;
+        }
+        res.json(event);
+      }
     } catch (err) {
-      if (err.name === 'CastError' && err.kind === 'ObjectId') {
-        res.status(404);
-        res.json({ error : 'Event not found' });
-      } else {
-        res.status(500);
-        res.json({ error: err.message });
-      }
+        res.status(500).json({ error: err.message });
     }
   }
 

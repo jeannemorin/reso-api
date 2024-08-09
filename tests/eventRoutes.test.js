@@ -200,9 +200,18 @@ describe('Event API', () => {
     expect(res.body).toHaveProperty('_id', eventId);
   });
 
-  it('should return error when retrieving non-existent event by ID', async () => {
+  it('should return error when retrieving invalid ID', async () => {
     const res = await request(process.env.API_URL)
       .get('/api/events/invalidId')
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error');
+  });
+
+  it('should return error when retrieving non-existent event by ID', async () => {
+    const res = await request(process.env.API_URL)
+      .get('/api/events/41224d776a326fb40f000001')
       .set('Authorization', `Bearer ${adminToken}`);
 
     expect(res.statusCode).toBe(404);
@@ -227,13 +236,27 @@ describe('Event API', () => {
     expect(res.body.title).toBe(updateData.title);
   });
 
-  it('should return error when updating non-existent event', async () => {
+  it('should return error when invalid event id', async () => {
     const updateData = {
       title: 'Non-existent Event'
     };
 
     const res = await request(process.env.API_URL)
       .put('/api/events/invalidId')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send(updateData);
+
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty('error');
+  });
+
+  it('should return error when updating non-existent event', async () => {
+    const updateData = {
+      title: 'Non-existent Event'
+    };
+
+    const res = await request(process.env.API_URL)
+      .put('/api/events/41224d776a326fb40f000001')
       .set('Authorization', `Bearer ${adminToken}`)
       .send(updateData);
 

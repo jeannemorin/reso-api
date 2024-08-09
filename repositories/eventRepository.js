@@ -9,12 +9,13 @@ class EventRepository {
     return Event.find();
   }
 
-  async create(event) {
-    return Event.create(event);
+  async create(eventData) {
+    const event = new Event(eventData);
+    return await event.save();
   }
 
-  async update(id, event) {
-    return Event.findByIdAndUpdate(id, event, { new: true });
+  async update(id, event) {  
+      return Event.findByIdAndUpdate(id, event, { new: true });
   }
 
   async delete(id) {
